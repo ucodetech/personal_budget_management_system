@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:personal_budget_managemet/screens/add_expense/views/add_expense.dart';
 import 'package:personal_budget_managemet/screens/home/views/main_screen.dart';
 import 'package:personal_budget_managemet/screens/stats/Stat.dart';
 
@@ -28,7 +29,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ), 
       child: BottomNavigationBar(
         onTap: (value) {
-          // Navigator.push(context, MaterialPageRoute(builder: (context) => MainScreen()));
           setState(() {
             index = value;
           });
@@ -57,7 +57,10 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => AddExpense()));
+
+        },
       shape: const CircleBorder(),
        child: Container(
           width: 60,
