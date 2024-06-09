@@ -1,12 +1,15 @@
 
 import 'dart:math';
 
+import 'package:expense_repository/expense_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:personal_budget_managemet/data/data.dart';
+import 'package:intl/intl.dart';
+import 'package:personal_budget_managemet/screens/home/views/all_expenses_dart.dart';
 
 class MainScreen extends StatelessWidget {
-  const MainScreen({super.key});
+  final List<Expense> expenses;
+  const MainScreen(this.expenses, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -210,14 +213,17 @@ class MainScreen extends StatelessWidget {
                 "Transactions",
                 style: TextStyle(
                   fontSize: 16,
-                  color : Theme.of(context).colorScheme.onBackground,
+                  color : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold
                 ),
               ),
                GestureDetector(
-                onTap: () {
-
-                },
+               onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AllExpense()),
+                );
+               },
                  child: const Text(
                   "View All",
                   style: TextStyle(
@@ -233,7 +239,7 @@ class MainScreen extends StatelessWidget {
            Expanded(
              child: ListView.builder(
                   // itemCount: expenses.length,
-                  itemCount: transactionsData.length,
+                  itemCount: expenses.length,
                   itemBuilder: (context, int i) {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
@@ -256,25 +262,25 @@ class MainScreen extends StatelessWidget {
                                         width: 50,
                                         height: 50,
                                         decoration:  BoxDecoration(
-                                          color: transactionsData[i]['color'],
+                                          color: Color(expenses[i].category.color),
                                           shape: BoxShape.circle
                                         ),
                                       ),
-                                      transactionsData[i]['icon']
-                                      // Image.asset(
-                                      //   'assets/${expenses[i].category.icon}.png',
-                                      //   scale: 2,
-                                      //   color: Colors.white,
-                                      // )
+                                      
+                                      Image.asset(
+                                        'assets/${expenses[i].category.icon}.png',
+                                        scale: 2,
+                                        color: Colors.white,
+                                      )
                                     ],
                                   ),
                                   const SizedBox(width: 12),
                                   Text(
                                     // expenses[i].category.name,
-                                    transactionsData[i]['name'],
+                                    expenses[i].category.name,
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: Theme.of(context).colorScheme.onBackground,
+                                      color: Theme.of(context).colorScheme.onSurface,
                                       fontWeight: FontWeight.w500
                                     ),
                                   ),
@@ -284,17 +290,15 @@ class MainScreen extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   Text(
-                                    // "N ${expenses[i].amount}.00",
-                                    transactionsData[i]['totalAmount'],
+                                    "N${expenses[i].amount}0",
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: Theme.of(context).colorScheme.onBackground,
+                                      color: Theme.of(context).colorScheme.onSurface,
                                       fontWeight: FontWeight.w400
                                     ),
                                   ),
                                   Text(
-                                    // DateFormat('dd/MM/yyyy').format(expenses[i].date),
-                                    transactionsData[i]['date'],
+                                    DateFormat('dd/MM/yyyy').format(expenses[i].date),
                                     style: TextStyle(
                                       fontSize: 14,
                                       color: Theme.of(context).colorScheme.outline,
@@ -310,11 +314,11 @@ class MainScreen extends StatelessWidget {
                     );
                   }
                 ),
-           ),
+             ),
             
         ],
       ),
-     )
+     ),
     );
   }
 }
