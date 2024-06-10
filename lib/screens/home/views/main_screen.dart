@@ -5,11 +5,28 @@ import 'package:expense_repository/expense_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:personal_budget_managemet/screens/add_expense/views/add_money.dart';
 import 'package:personal_budget_managemet/screens/home/views/all_expenses_dart.dart';
 
 class MainScreen extends StatelessWidget {
   final List<Expense> expenses;
   const MainScreen(this.expenses, {super.key});
+
+  // Function to calculate total expenses
+ // Function to calculate total expenses
+  double getTotalExpenses() {
+    double total = 0;
+    for (var expense in expenses) {
+      // Ensure the expense amount is valid
+      // ignore: unnecessary_null_comparison
+      if (expense.amount != null) {
+        total += expense.amount;
+      } else {
+        return 0;
+      }
+    }
+    return total;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +74,7 @@ class MainScreen extends StatelessWidget {
                         style: TextStyle(
                         fontSize:  18,
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onBackground
+                        color: Theme.of(context).colorScheme.onSurface
                       ),
                     )
                   ]
@@ -65,8 +82,14 @@ class MainScreen extends StatelessWidget {
               ],
               ),
               IconButton(
-              onPressed: () {}, 
-              icon: Icon(CupertinoIcons.settings))
+               onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) =>  const AddMoney()),
+                );
+               },
+               icon: const Icon(CupertinoIcons.settings)
+              ),
             ],
           ),
           const SizedBox(height:20,),
@@ -176,10 +199,10 @@ class MainScreen extends StatelessWidget {
                             )
                           ),
                           const SizedBox(width: 8),
-                          const Column(
+                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                               Text(
+                               const Text(
                                   "Expenses",
                                   style: TextStyle(
                                     fontSize: 14,
@@ -188,8 +211,8 @@ class MainScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  "N 18500.00",
-                                   style: TextStyle(
+                                   "N ${getTotalExpenses()}0",
+                                   style: const TextStyle(
                                     fontSize: 14,
                                     color: Colors.white,
                                     fontWeight: FontWeight.w600 
@@ -221,7 +244,7 @@ class MainScreen extends StatelessWidget {
                onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const AllExpense()),
+                  MaterialPageRoute(builder: (context) =>  AllExpense(expenses)),
                 );
                },
                  child: const Text(
