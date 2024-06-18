@@ -8,6 +8,8 @@ class FireBaseExpenseRepo implements ExpenseRepository {
 
   final categoryCollection = FirebaseFirestore.instance.collection('categories');
   final expenseCollection = FirebaseFirestore.instance.collection('expenses');
+  final moneyCollection = FirebaseFirestore.instance.collection('money');
+
 
   @override
   Future<void> createCategory(Category category) async {
@@ -78,6 +80,34 @@ class FireBaseExpenseRepo implements ExpenseRepository {
       .get()
       .then((value)=> value.docs.map((e) =>
       Expense.fromEntity(ExpenseEntity.fromDocument(e.data()))
+      ).toList());
+    } catch (e) {
+      log(e.toString());
+      rethrow;
+    }
+  }
+
+    @override
+  Future<void> createMoney(Money money) async {
+    try {
+     
+      await moneyCollection
+      .doc(money.moneyId)
+      .set(money.toEntity().toDocument());
+      
+    } catch (e) {
+      log(e.toString());
+      rethrow;
+    }
+  }
+  
+  @override
+  Future<List<Money>> getAllMoney() async {
+     try {
+     return await moneyCollection
+      .get()
+      .then((value)=> value.docs.map((e) =>
+      Money.fromEntity(MoneyEntity.fromDocument(e.data()))
       ).toList());
     } catch (e) {
       log(e.toString());

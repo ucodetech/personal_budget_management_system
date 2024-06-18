@@ -9,5 +9,7 @@ abstract class ExpenseRepository{
   Future<void> createExpense(Expense expense);
   Future<List<Expense>> getAllExpense();
 
+  Future<void> createMoney(Money money);
+  Future<List<Money>> getAllMoney();
 
 }
