@@ -114,7 +114,7 @@ class MainScreen extends StatelessWidget {
                           MaterialPageRoute(builder: (context) => const AddMoney()),
                         );
                       },
-                      icon: const Icon(CupertinoIcons.settings, color: Color.fromARGB(255, 33, 0, 39),),
+                      icon: const Icon(CupertinoIcons.money_dollar_circle_fill, color: Color.fromARGB(255, 33, 0, 39),),
                     ),
                     IconButton(
                       onPressed: () {

@@ -58,7 +58,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 											hintText: 'Email',
 											obscureText: false,
 											keyboardType: TextInputType.emailAddress,
-											prefixIcon: const Icon(CupertinoIcons.mail_solid, color: Colors.purple),
+											prefixIcon: const Icon(CupertinoIcons.mail_solid, color: Colors.white),
 											validator: (val) {
 												if(val!.isEmpty) {
 													return 'Please fill in this field';													
@@ -77,7 +77,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 											hintText: 'Password',
 											obscureText: obscurePassword,
 											keyboardType: TextInputType.visiblePassword,
-											prefixIcon: const Icon(CupertinoIcons.lock_fill, color: Colors.purple),
+											prefixIcon: const Icon(CupertinoIcons.lock_fill, color: Colors.white),
 											onChanged: (val) {
 												if(val!.contains(RegExp(r'[A-Z]'))) {
 													setState(() {
@@ -137,7 +137,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 														}
 													});
 												},
-												icon: Icon(iconPassword, color: Colors.purple),
+												icon: Icon(iconPassword, color: Colors.white),
 											),
 											validator: (val) {
 												if (val!.isEmpty) {
@@ -214,7 +214,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 											hintText: 'Name',
 											obscureText: false,
 											keyboardType: TextInputType.name,
-											prefixIcon: const Icon(CupertinoIcons.person_fill, color: Colors.purple),
+											prefixIcon: const Icon(CupertinoIcons.person_fill, color: Colors.white),
 											validator: (val) {
 												if(val!.isEmpty) {
 													return 'Please fill in this field';													
