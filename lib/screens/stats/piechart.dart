@@ -1,20 +1,32 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:personal_budget_managemet/data/app_resources.dart';
+import 'package:expense_repository/expense_repository.dart';
 import 'package:personal_budget_managemet/data/indicator.dart';
-
-
-
+import 'package:personal_budget_managemet/data/app_resources.dart';
 
 class MyPieChart extends StatefulWidget {
-  const MyPieChart({super.key});
+  final List<Expense> expenses;
+
+  const MyPieChart(this.expenses, {super.key});
 
   @override
   State<StatefulWidget> createState() => PieChart2State();
 }
 
-class PieChart2State extends State {
+class PieChart2State extends State<MyPieChart> {
   int touchedIndex = -1;
+  final List<Color> availableColors = [
+    Colors.blue,
+    Colors.yellow,
+    Colors.purple,
+    Colors.green,
+    Colors.orange,
+    Colors.red,
+    Colors.pink,
+    Colors.brown,
+    Colors.cyan,
+    Colors.teal,
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -54,43 +66,10 @@ class PieChart2State extends State {
               ),
             ),
           ),
-          const Column(
+          Column(
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Indicator(
-                color: AppColors.contentColorBlue,
-                text: 'First',
-                isSquare: true,
-              ),
-              SizedBox(
-                height: 4,
-              ),
-              Indicator(
-                color: AppColors.contentColorYellow,
-                text: 'Second',
-                isSquare: true,
-              ),
-              SizedBox(
-                height: 4,
-              ),
-              Indicator(
-                color: AppColors.contentColorPurple,
-                text: 'Third',
-                isSquare: true,
-              ),
-              SizedBox(
-                height: 4,
-              ),
-              Indicator(
-                color: AppColors.contentColorGreen,
-                text: 'Fourth',
-                isSquare: true,
-              ),
-              SizedBox(
-                height: 18,
-              ),
-            ],
+            children: indicators(),
           ),
           const SizedBox(
             width: 28,
@@ -101,67 +80,77 @@ class PieChart2State extends State {
   }
 
   List<PieChartSectionData> showingSections() {
-    return List.generate(4, (i) {
-      final isTouched = i == touchedIndex;
+    final Map<String, double> categorySums = {};
+
+    // Calculate the sum of expenses for each category
+    for (var expense in widget.expenses) {
+      categorySums.update(
+        expense.category.name,
+        (value) => value + expense.amount,
+        ifAbsent: () => expense.amount,
+      );
+    }
+
+    // Get the total sum of all expenses
+    final double totalSum =
+        categorySums.values.fold(0, (previous, amount) => previous + amount);
+
+    final List<PieChartSectionData> sections = [];
+    final List<Color> assignedColors = [];
+    int colorIndex = 0;
+
+    categorySums.forEach((category, amount) {
+      final percentage = (amount / totalSum) * 100;
+      final isTouched = sections.length == touchedIndex;
       final fontSize = isTouched ? 25.0 : 16.0;
       final radius = isTouched ? 60.0 : 50.0;
       const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
-      switch (i) {
-        case 0:
-          return PieChartSectionData(
-            color: AppColors.contentColorBlue,
-            value: 40,
-            title: '40%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: AppColors.mainTextColor1,
-              shadows: shadows,
-            ),
-          );
-        case 1:
-          return PieChartSectionData(
-            color: AppColors.contentColorYellow,
-            value: 30,
-            title: '30%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: AppColors.mainTextColor1,
-              shadows: shadows,
-            ),
-          );
-        case 2:
-          return PieChartSectionData(
-            color: AppColors.contentColorPurple,
-            value: 15,
-            title: '15%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: AppColors.mainTextColor1,
-              shadows: shadows,
-            ),
-          );
-        case 3:
-          return PieChartSectionData(
-            color: AppColors.contentColorGreen,
-            value: 15,
-            title: '15%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: AppColors.mainTextColor1,
-              shadows: shadows,
-            ),
-          );
-        default:
-          throw Error();
-      }
+      final color = availableColors[colorIndex % availableColors.length];
+      assignedColors.add(color);
+
+      sections.add(PieChartSectionData(
+        color: color,
+        value: percentage,
+        title: '${percentage.toStringAsFixed(1)}%',
+        radius: radius,
+        titleStyle: TextStyle(
+          fontSize: fontSize,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+          shadows: shadows,
+        ),
+      ));
+      colorIndex++;
     });
+
+    return sections;
+  }
+
+  List<Widget> indicators() {
+    final Map<String, double> categorySums = {};
+
+    // Calculate the sum of expenses for each category
+    for (var expense in widget.expenses) {
+      categorySums.update(
+        expense.category.name,
+        (value) => value + expense.amount,
+        ifAbsent: () => expense.amount,
+      );
+    }
+
+    final List<Widget> indicatorWidgets = [];
+    int colorIndex = 0;
+
+    categorySums.keys.forEach((category) {
+      final color = availableColors[colorIndex % availableColors.length];
+      indicatorWidgets.add(Indicator(
+        color: color,
+        text: category,
+        isSquare: true,
+      ));
+      colorIndex++;
+    });
+
+    return indicatorWidgets;
   }
 }

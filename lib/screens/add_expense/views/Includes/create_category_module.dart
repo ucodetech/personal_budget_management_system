@@ -8,7 +8,7 @@ import 'package:personal_budget_managemet/widgets/button.dart';
 import 'package:uuid/uuid.dart';
 
 
-Future getCreateCategoryModule(BuildContext context){
+Future getCreateCategoryModule(BuildContext context, userId){
   List<String> myCategoriesIcons = [
     'entertainment',
     'food',
@@ -319,6 +319,7 @@ Future getCreateCategoryModule(BuildContext context){
                                   ? categoryIconController.text
                                   : iconSelected;
                               category.color = categoryColor.value;
+                              category.userId = userId;
                             });
                             
                             context.read<CreateCategoryBloc>().add(

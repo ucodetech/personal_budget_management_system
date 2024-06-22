@@ -15,3 +15,13 @@ class CreateExpense extends CreateExpenseEvent{
   @override
   List<Object> get props => [expense];
 }
+
+
+class UpdateExpense extends CreateExpenseEvent {
+  final Expense expense;
+
+  const UpdateExpense(this.expense);
+
+  @override
+  List<Object> get props => [expense];
+}
