@@ -41,7 +41,7 @@ class MyTextField extends StatelessWidget{
         onTap: onTap,
         textInputAction: TextInputAction.next,
         onChanged: onChanged,
-        
+
         decoration: InputDecoration(
           suffixIcon: suffixIcon,
           prefixIcon: prefixIcon,
@@ -56,10 +56,13 @@ class MyTextField extends StatelessWidget{
               borderRadius: BorderRadius.circular(20),
               borderSide: BorderSide(color: Theme.of(context).colorScheme.surface)
           ),
-          fillColor: const Color.fromARGB(255, 62, 6, 71).withOpacity(0.1),
+          fillColor: const Color.fromARGB(255, 41, 0, 48).withOpacity(0.4),
           filled: true,
           hintStyle: TextStyle(color: Colors.grey[500]),
           errorText: errorMsg,
+        ),
+        style: const TextStyle(
+          color: Colors.white
         ),
       );
     }

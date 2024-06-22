@@ -76,13 +76,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
               ),
 
               BackdropFilter(
-                filter: ImageFilter.blur(sigmaX:100.0, sigmaY:100.0),
+                filter: ImageFilter.blur(sigmaX:150.0, sigmaY:150.0),
                 child: Container(),
               ),
               Align(
                 alignment: Alignment.bottomCenter,
                 child: SizedBox(
-                  height:  MediaQuery.of(context).size.height / 1.8,
+                  height:  MediaQuery.of(context).size.height / 1.2,
                   child: Column(
                     children: [
                         Padding(

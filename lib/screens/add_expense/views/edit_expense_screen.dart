@@ -315,6 +315,8 @@ class _EditExpenseScreenState extends State<EditExpenseScreen> {
             'name': _expense.category.name,
             'color': _expense.category.color,
             'icon': _expense.category.icon,
+            'totalExpenses': _expense.category.totalExpenses,
+            'userId': _expense.category.userId
           },
         }).then((_) {
           Navigator.of(context).pop(true);

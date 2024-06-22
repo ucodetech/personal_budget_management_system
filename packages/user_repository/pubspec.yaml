@@ -10,7 +10,6 @@ dependencies:
   flutter:
     sdk: flutter
   # firebase_core: ^2.32.0
-  image_picker: ^0.8.4+3
 
 
   bloc: ^8.1.4
