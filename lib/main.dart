@@ -12,7 +12,8 @@ void main() async {
       apiKey: 'AIzaSyBk0A1DUqlutEIQ7LQUoj1FDwJG9yciw30', // paste your api key here
       appId: '1:847211822277:android:49a9c9b008cfd54dd704ac', //paste your app id here
       messagingSenderId: '847211822277', //paste your messagingSenderId here
-      projectId: 'expense-tracker-47240', //paste your project id here
+      projectId: 'expense-tracker-47240',
+      storageBucket: "expense-tracker-47240.appspot.com", //paste your project id here
     ),
   );
   Bloc.observer = SimpleBlocObserver();

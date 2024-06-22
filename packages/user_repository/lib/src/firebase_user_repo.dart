@@ -7,7 +7,7 @@ import 'package:user_repository/src/user_repo.dart';
 
 class FirebaseUserRepo implements UserRepository{
   final FirebaseAuth _firebaseAuth;
-  final userCollection = FirebaseFirestore.instance.collection('user');
+  final userCollection = FirebaseFirestore.instance.collection('users');
 
    FirebaseUserRepo({
     FirebaseAuth? firebaseAuth,
@@ -37,13 +37,20 @@ class FirebaseUserRepo implements UserRepository{
   @override
   Future<MyUser> signUp(MyUser myUser, String password) async {
      try {
-       UserCredential user =  await _firebaseAuth.createUserWithEmailAndPassword(
-          email: myUser.email, 
-          password: password
-          );
-        myUser = myUser.copyWith(
-          userId: user.user!.uid
-        );
+       UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
+         email: myUser.email,
+         password: password
+       );
+        User? user = userCredential.user;
+
+         await user!.updateDisplayName(myUser.name);
+         await user.reload();
+
+         myUser = myUser.copyWith(
+           userId: user.uid,
+           name: user.displayName
+         );
+
         return myUser;
     } catch (e) {
       log(e.toString() as num);

@@ -63,7 +63,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 FloatingActionButtonLocation.centerDocked,
             floatingActionButton: FloatingActionButton(
               onPressed: () async {
-
                 Expense? newExpense = await  Navigator.push(
                     context,
                     MaterialPageRoute<Expense>(

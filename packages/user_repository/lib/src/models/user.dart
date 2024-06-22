@@ -11,24 +11,25 @@ class MyUser extends Equatable{
     const MyUser({
       required this.userId,
       required this.email,
-      required this.name
+      required this.name,
     });
 
     static const empty = MyUser(
       userId: '', 
       email: '', 
-      name: ''
+      name: '',
       );
 
       MyUser copyWith({
         String? userId,
         String? email,
-        String? name
+        String? name,
+        String? photoUrl
       }){
         return MyUser(
           userId: userId ?? this.userId, 
           email: email ?? this.email, 
-          name: name ?? this.name
+          name: name ?? this.name,
           );
       }
 
@@ -36,7 +37,7 @@ class MyUser extends Equatable{
       return MyUserEntity(
          userId: userId, 
           email: email, 
-          name: name 
+          name: name ,
       );
     }
 
@@ -44,7 +45,7 @@ class MyUser extends Equatable{
       return MyUser(
          userId: entity.userId , 
           email: entity.email, 
-          name: entity.name 
+          name: entity.name,
       );
     }
 

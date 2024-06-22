@@ -9,14 +9,14 @@ class MyUserEntity extends Equatable {
   const MyUserEntity({
       required this.userId,
       required this.email,
-      required this.name
+      required this.name,
     });
 
     Map<String, Object?> toDocument() {
       return {
         'userId': userId,
         'email': email,
-        'name': name
+        'name': name,
       };
     }
 
@@ -24,7 +24,7 @@ class MyUserEntity extends Equatable {
     return MyUserEntity(
       userId: doc['userId'], 
       email: doc['email'], 
-      name: doc['name']
+      name: doc['name'],
       );
   }
      @override

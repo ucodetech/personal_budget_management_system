@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:personal_budget_managemet/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:personal_budget_managemet/screens/add_expense/blocs/get_money_bloc/get_money_bloc.dart';
 import 'package:personal_budget_managemet/screens/add_expense/views/add_money.dart';
+import 'package:personal_budget_managemet/screens/auth/upload_profile_photo.dart';
 import 'package:personal_budget_managemet/screens/home/views/all_expenses_dart.dart';
 import 'package:personal_budget_managemet/utils/utils.dart';
 
@@ -43,22 +44,42 @@ class MainScreen extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
-                          width: 50,
-                          height: 50,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Color.fromARGB(255, 70, 2, 109),
+                    GestureDetector(
+                      onDoubleTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const ProfilePhotoUploadScreen()),
+                        );
+                      },
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Container(
+                            width: 50,
+                            height: 50,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Color.fromARGB(255, 70, 2, 109),
+                            ),
                           ),
-                        ),
-                        const Icon(
-                          CupertinoIcons.person_alt_circle,
-                          color: Colors.white30,
-                        ),
-                      ],
+                          Column(
+                            children: [
+                              user.photoURL != null
+                                ? ClipOval(
+                                    child: Image.network(
+                                      user.photoURL!,
+                                      width: 80,
+                                      height: 80,
+                                      fit: BoxFit.contain
+                                      
+                                    ),
+                                  )
+                                : const Icon(Icons.account_circle, size: 100),
+                            ],
+                          ),
+                         
+                        ],
+                      ),
                     ),
                     const SizedBox(width: 8),
                     Column(
@@ -73,7 +94,7 @@ class MainScreen extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          "${user.email}",
+                          "${user.displayName}",
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
