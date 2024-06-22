@@ -36,7 +36,7 @@ String? _errorMsg;
               hintText: 'Email',
               obscureText: false,
               keyboardType: TextInputType.emailAddress,
-              prefixIcon: const Icon(CupertinoIcons.mail_solid, color: Colors.purple),
+              prefixIcon: const Icon(CupertinoIcons.mail_solid, color: Colors.white),
               errorMsg: _errorMsg,
               validator: (val) {
                 if(val!.isEmpty){
@@ -56,7 +56,7 @@ String? _errorMsg;
               hintText: 'Password',
               obscureText: obscurePassword,
               keyboardType: TextInputType.visiblePassword,
-              prefixIcon: const Icon(CupertinoIcons.lock_fill, color: Colors.purple),
+              prefixIcon: const Icon(CupertinoIcons.lock_fill, color: Colors.white),
               errorMsg: _errorMsg,
               validator: (val) {
                 if (val!.isEmpty) {
@@ -79,7 +79,7 @@ String? _errorMsg;
                 },
                 icon: Icon(
                   iconPassword,
-                  color: Colors.purple,
+                  color: Colors.white,
                   ),
                ),
               ),
