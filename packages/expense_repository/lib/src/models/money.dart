@@ -1,6 +1,5 @@
 
-
-import 'package:expense_repository/expense_repository.dart';
+import 'package:expense_repository/src/entities/entities.dart';
 
 class Money {
   String moneyId;

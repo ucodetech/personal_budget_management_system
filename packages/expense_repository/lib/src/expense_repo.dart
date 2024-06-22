@@ -1,4 +1,5 @@
-import 'package:expense_repository/expense_repository.dart';
+import 'package:expense_repository/src/models/category.dart';
+import 'package:expense_repository/src/models/money.dart';
 
 abstract class ExpenseRepository{
 
