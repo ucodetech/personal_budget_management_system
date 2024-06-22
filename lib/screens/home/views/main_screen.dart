@@ -73,7 +73,7 @@ class MainScreen extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          "${user.email}",
+                          "${user.displayName}",
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
