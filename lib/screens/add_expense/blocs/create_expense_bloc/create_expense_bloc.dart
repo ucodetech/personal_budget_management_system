@@ -11,12 +11,23 @@ class CreateExpenseBloc extends Bloc<CreateExpenseEvent, CreateExpenseState> {
   CreateExpenseBloc(this.expenseRepository) : super(CreateExpenseInitial()) {
     on<CreateExpense>((event, emit) async {
       emit(CreateExpenseLoading());
-      try {
-        await expenseRepository.createExpense(event.expense);
-        emit(CreateExpenseSuccess());
-      } catch (e) {
-        emit(CreateExpenseFailure());
-      }
+       if (event is CreateExpense) {
+            emit(CreateExpenseLoading());
+            try {
+              await expenseRepository.createExpense(event.expense);
+              emit(CreateExpenseSuccess());
+            } catch (e) {
+              emit(CreateExpenseFailure());
+            }
+          } else if (event is UpdateExpense) {
+            emit(CreateExpenseLoading());
+            try {
+              await expenseRepository.updateExpense(event.expense);
+              emit(CreateExpenseSuccess());
+            } catch (e) {
+              emit(CreateExpenseFailure());
+            }
+         }
     });
   }
 }

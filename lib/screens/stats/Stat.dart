@@ -1,12 +1,30 @@
-import 'package:fl_chart/fl_chart.dart';
+// import 'package:fl_chart/fl_chart.dart';
+import 'package:expense_repository/expense_repository.dart';
 import 'package:flutter/material.dart';
 
 import 'chart.dart';
 import 'piechart.dart';
 
-class StatScreen extends StatelessWidget {
-  const StatScreen({super.key});
+class StatScreen extends StatefulWidget {
 
+  final List<Expense> expenses;
+
+  const StatScreen(this.expenses, {super.key});
+
+  @override
+  State<StatScreen> createState() => _StatScreenState();
+}
+
+class _StatScreenState extends State<StatScreen> {
+
+   late List<Expense> expenses;
+
+  @override
+  void initState() {
+    super.initState();
+    expenses = widget.expenses;
+  }
+  
   @override
   Widget build(BuildContext context) {
      return SafeArea(
@@ -17,7 +35,7 @@ class StatScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'Transactions',
+                        'Transactions ',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -31,9 +49,9 @@ class StatScreen extends StatelessWidget {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Padding(
+                        child:  Padding(
                           padding: EdgeInsets.fromLTRB(12, 20, 12, 12),
-                          child: MyChart(), // Bar chart widget
+                          child: MyChart(expenses),
                         ),
                       ),
                       const SizedBox(height: 20), // Space between the two charts
@@ -44,9 +62,9 @@ class StatScreen extends StatelessWidget {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Padding(
+                        child:  Padding(
                           padding: EdgeInsets.fromLTRB(12, 20, 12, 12),
-                          child: MyPieChart(), // Pie chart widget
+                          child: MyPieChart(expenses), // Pie chart widget
                         ),
                       ),
                     ],
