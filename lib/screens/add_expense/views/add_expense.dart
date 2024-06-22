@@ -1,4 +1,5 @@
 import 'package:expense_repository/expense_repository.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -26,6 +27,8 @@ class _AddExpenseState extends State<AddExpense> {
   bool Color_Status = true;
   late Expense expense;
   bool isLoading = false;
+  bool show = false;
+  final user = FirebaseAuth.instance.currentUser!;
 
   @override
   void initState() {
@@ -52,7 +55,10 @@ class _AddExpenseState extends State<AddExpense> {
         }
       },
       child: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
+        onTap: () => {
+          FocusScope.of(context).unfocus(),
+          
+          },
         child: Scaffold(
           backgroundColor: Theme.of(context).colorScheme.surface,
           appBar:
@@ -113,6 +119,7 @@ class _AddExpenseState extends State<AddExpense> {
                             borderRadius: BorderRadius.circular(20),
                           ),
                         ),
+                        keyboardType: TextInputType.number,
                       ),
                     ),
                     const SizedBox(
@@ -122,7 +129,9 @@ class _AddExpenseState extends State<AddExpense> {
                       controller: categoryController,
                       textAlignVertical: TextAlignVertical.center,
                       readOnly: true,
-                      onTap: () {},
+                      onTap: () {
+                        show = true;
+                      },
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: expense.category == Category.empty
@@ -136,9 +145,12 @@ class _AddExpenseState extends State<AddExpense> {
                                 scale: 2),
                         suffixIcon: IconButton(
                             onPressed: () async {
+                              setState(() {
+                                show = !show;
+                              });
                               // create category module
                               var newCategory =
-                                  await getCreateCategoryModule(context);
+                                  await getCreateCategoryModule(context, user.uid);
                               if (newCategory != null) {
                                 setState(() {
                                   cat.insert(0, newCategory);
@@ -146,7 +158,8 @@ class _AddExpenseState extends State<AddExpense> {
                               }
                             },
                             icon: const Icon(FontAwesomeIcons.circlePlus,
-                                size: 16, color: Colors.grey)),
+                                size: 16, color: Colors.grey)
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                           borderSide: const BorderSide(
@@ -172,42 +185,46 @@ class _AddExpenseState extends State<AddExpense> {
                         ),
                       ),
                     ),
-                    Container(
-                      height: 200,
-                      width: MediaQuery.of(context).size.width,
-
-                      // color: Colors.red,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ListView.builder(
-                            itemCount: cat.length,
-                            itemBuilder: (context, int i) {
-                              return Card(
-                                child: ListTile(
-                                  onTap: () {
-                                    setState(() {
-                                      expense.category = cat[i];
-                                      categoryController.text =
-                                          expense.category.name;
-                                    });
-                                  },
-                                  leading: Image.asset(
-                                      'assets/${cat[i].icon}.png',
-                                      scale: 2),
-                                  title: Text(
-                                    cat[i].name,
+                    
+                    SizedBox(
+                      
+                      child: cat.isNotEmpty ? Container(
+                        height: 200,
+                        width: MediaQuery.of(context).size.width,
+                      
+                        // color: Colors.red,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ListView.builder(
+                              itemCount: cat.length,
+                              itemBuilder: (context, int i) {
+                                return Card(
+                                  child: ListTile(
+                                    onTap: () {
+                                      setState(() {
+                                        expense.category = cat[i];
+                                        categoryController.text =
+                                            expense.category.name;
+                                      });
+                                    },
+                                    leading: Image.asset(
+                                        'assets/${cat[i].icon}.png',
+                                        scale: 2),
+                                    title: Text(
+                                      cat[i].name,
+                                    ),
+                                    tileColor: Color(cat[i].color),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8)),
+                                    textColor: Colors.white,
                                   ),
-                                  tileColor: Color(cat[i].color),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8)),
-                                  textColor: Colors.white,
-                                ),
-                              );
-                            }),
-                      ),
+                                );
+                              }),
+                        ),
+                      ) : Container(),
                     ),
 
                     const SizedBox(
@@ -281,7 +298,7 @@ class _AddExpenseState extends State<AddExpense> {
                                 setState(() {
                                   expense.expenseId = const Uuid().v1();
                                   expense.amount = double.parse(expenseController.text);
-                                  expense.userId = const Uuid().v4();
+                                  expense.userId =  user.uid;
                                 });
                               context.read<CreateExpenseBloc>().add(CreateExpense(expense));
                             }

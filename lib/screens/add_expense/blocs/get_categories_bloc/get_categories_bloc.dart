@@ -11,7 +11,7 @@ class GetCategoriesBloc extends Bloc<GetCategoriesEvent, GetCategoriesState> {
     on<GetCategories>((event, emit) async {
       emit(GetCategoriesLoading());
       try {
-       List<Category> categories =  await expenseRepository.getAllCategory();
+       List<Category> categories =  await expenseRepository.getAllCategory(event.userId);
         emit(GetCategoriesSuccess(categories));
       } catch (e) {
         emit(GetCategoriesFailure());

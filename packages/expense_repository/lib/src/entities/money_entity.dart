@@ -1,17 +1,14 @@
 
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:expense_repository/src/entities/entities.dart';
-
-
 class MoneyEntity {
   String moneyId;
   double amount;
+  double income;
   String userId;
 
   MoneyEntity({
        required this.moneyId,
         required this.amount,
+        required this.income,
         required this.userId, 
   });
 
@@ -19,6 +16,7 @@ class MoneyEntity {
      return {
       'moneyId' : moneyId,
       'amount': amount,
+      'income' : income,
       'userId': userId
      };
   }
@@ -27,6 +25,7 @@ class MoneyEntity {
     return MoneyEntity(
       moneyId: doc['moneyId'],
       amount: doc['amount'],
+      income: doc['income'],
       userId: doc['userId']
       
     );

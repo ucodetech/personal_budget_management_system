@@ -4,6 +4,7 @@ class CategoryEntity {
   int totalExpenses;
   String icon;
   int color;
+  String userId;
 
 
   CategoryEntity({
@@ -11,7 +12,8 @@ class CategoryEntity {
     required this.name,
     required this.totalExpenses,
     required this.icon,
-    required this.color
+    required this.color,
+    required this.userId
   });
 
   Map<String, Object?> toDocument() {
@@ -20,7 +22,8 @@ class CategoryEntity {
       'name': name,
       'totalExpenses': totalExpenses,
       'icon': icon,
-      'color': color
+      'color': color,
+      'userId': userId
     };
   }
 
@@ -30,7 +33,8 @@ class CategoryEntity {
       name: doc['name'],
       totalExpenses: doc['totalExpenses'],
       icon: doc['icon'],
-      color: doc['color']
+      color: doc['color'],
+      userId: doc['userId']
       
     );
   }

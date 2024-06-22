@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:personal_budget_managemet/app.dart';
+import 'package:user_repository/user_repository.dart';
 import 'simple_bloc_observer.dart';
 
 void main() async {
@@ -16,7 +17,7 @@ void main() async {
   );
   Bloc.observer = SimpleBlocObserver();
 
-  runApp(const MyApp());
+  runApp(MyAppScreen(FirebaseUserRepo()));
 }
 
 
