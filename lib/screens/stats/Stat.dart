@@ -1,5 +1,4 @@
 // import 'package:fl_chart/fl_chart.dart';
-import 'package:expense_repository/expense_repository.dart';
 import 'package:flutter/material.dart';
 
 import 'chart.dart';
