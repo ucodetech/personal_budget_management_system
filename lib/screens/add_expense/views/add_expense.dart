@@ -1,15 +1,6 @@
-import 'package:expense_repository/expense_repository.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:personal_budget_managemet/screens/add_expense/blocs/create_expense_bloc/create_expense_bloc.dart';
-import 'package:personal_budget_managemet/screens/add_expense/blocs/get_categories_bloc/get_categories_bloc.dart';
-import 'package:personal_budget_managemet/screens/add_expense/views/Includes/create_category_module.dart';
-import 'package:personal_budget_managemet/widgets/button.dart';
-import 'package:personal_budget_managemet/widgets/timer_w.dart';
-import 'package:uuid/uuid.dart';
 
 class AddExpense extends StatefulWidget {
   const AddExpense({super.key});
@@ -19,310 +10,438 @@ class AddExpense extends StatefulWidget {
 }
 
 class _AddExpenseState extends State<AddExpense> {
-  TextEditingController expenseController = TextEditingController();
-  TextEditingController categoryController = TextEditingController();
-  TextEditingController dateController = TextEditingController();
-  DateTime selectDate = DateTime.now();
-  String message = '';
-  bool Color_Status = true;
-  late Expense expense;
-  bool isLoading = false;
-  bool show = false;
-  final user = FirebaseAuth.instance.currentUser!;
 
-  @override
+TextEditingController expenseController = TextEditingController();
+TextEditingController categoryController = TextEditingController();
+TextEditingController dateController = TextEditingController();
+DateTime selectDate = DateTime.now();
+@override
   void initState() {
+    // TODO: implement initState
     dateController.text = DateFormat('dd/MM/yyyy').format(DateTime.now());
-    expense = Expense.empty;
     super.initState();
   }
 
+List<String> myCategoriesIcons = [
+    'entertainment',
+    'food',
+    'shopping',
+    'travel',
+    'tech',
+    'home',
+    'pet',
+];
+String iconSelected = '';
+
   @override
   Widget build(BuildContext context) {
-    return BlocListener<CreateExpenseBloc, CreateExpenseState>(
-      listener: (context, state) {
-        if(state is CreateExpenseSuccess){
-           setState(() {
-             expense.category = Category.empty;
-             expense = Expense.empty;
-             message = "Expense Created!";
-           });
-          Navigator.pop(context, expense);
-        }else if(state is CreateExpenseLoading){
-          setState(() {
-            isLoading = true;
-          });
-        }
-      },
-      child: GestureDetector(
-        onTap: () => {
-          FocusScope.of(context).unfocus(),
-          
-          },
-        child: Scaffold(
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          appBar:
-              AppBar(backgroundColor: Theme.of(context).colorScheme.surface),
-          body: BlocBuilder<GetCategoriesBloc, GetCategoriesState>(
-              builder: (context, state) {
-            if (state is GetCategoriesSuccess) {
-              var cat = state.categories;
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Add Expenses',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurface,
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.background,
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.background
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+             children: [
+                Text(
+                  'Add Expenses',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onBackground,
+                  ),
+                ),
+               const SizedBox(height: 16,),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.7,
+                  child: TextFormField(
+                    controller: expenseController,
+                    textAlignVertical: TextAlignVertical.center,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
+                      hintText: 'Amount',
+                      prefixIcon: const Icon(FontAwesomeIcons.nairaSign, size: 16, color: Colors.grey),
+                      border: OutlineInputBorder
+                      (
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: const BorderSide(
+                          color: Color.fromARGB(255, 65, 19, 73),
+                          width: 2.0,
+                        ),
                       ),
-                    ),
-
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.7,
-                      child: TextFormField(
-                        controller: expenseController,
-                        textAlignVertical: TextAlignVertical.center,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          hintText: 'Amount',
-                          prefixIcon: const Icon(FontAwesomeIcons.nairaSign,
-                              size: 16, color: Colors.grey),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: const BorderSide(
-                              color: Color.fromARGB(255, 65, 19, 73),
-                              width: 2.0,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                              color: Color.fromARGB(
-                                  255, 148, 2, 2), // Border color when focused
-                              width: 2.0,
-                            ),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          errorBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                              color: Colors
-                                  .red, // Border color when there is an error
-                              width: 2.0,
-                            ),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
+                       focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                          color: Color.fromARGB(255, 148, 2, 2), // Border color when focused
+                          width: 2.0,
                         ),
-                        keyboardType: TextInputType.number,
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                    ),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    TextFormField(
-                      controller: categoryController,
-                      textAlignVertical: TextAlignVertical.center,
-                      readOnly: true,
-                      onTap: () {
-                        show = true;
-                      },
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: expense.category == Category.empty
-                            ? Colors.white
-                            : Color(expense.category.color),
-                        hintText: 'Category',
-                        prefixIcon: expense.category == Category.empty
-                            ? const Icon(FontAwesomeIcons.list,
-                                size: 16, color: Colors.grey)
-                            : Image.asset('assets/${expense.category.icon}.png',
-                                scale: 2),
-                        suffixIcon: IconButton(
-                            onPressed: () async {
-                              setState(() {
-                                show = !show;
-                              });
-                              // create category module
-                              var newCategory =
-                                  await getCreateCategoryModule(context, user.uid);
-                              if (newCategory != null) {
-                                setState(() {
-                                  cat.insert(0, newCategory);
-                                });
-                              }
-                            },
-                            icon: const Icon(FontAwesomeIcons.circlePlus,
-                                size: 16, color: Colors.grey)
+                      errorBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                          color: Colors.red, // Border color when there is an error
+                          width: 2.0,
                         ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: const BorderSide(
-                            color: Color.fromARGB(255, 65, 19, 73),
-                            width: 2.0,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                            color: Color.fromARGB(
-                                255, 148, 2, 2), // Border color when focused
-                            width: 2.0,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                            color: Colors
-                                .red, // Border color when there is an error
-                            width: 2.0,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
+                        borderRadius: BorderRadius.circular(20),
                       ),
                     ),
                     
-                    SizedBox(
-                      
-                      child: cat.isNotEmpty ? Container(
-                        height: 200,
-                        width: MediaQuery.of(context).size.width,
-                      
-                        // color: Colors.red,
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ListView.builder(
-                              itemCount: cat.length,
-                              itemBuilder: (context, int i) {
-                                return Card(
-                                  child: ListTile(
-                                    onTap: () {
-                                      setState(() {
-                                        expense.category = cat[i];
-                                        categoryController.text =
-                                            expense.category.name;
-                                      });
-                                    },
-                                    leading: Image.asset(
-                                        'assets/${cat[i].icon}.png',
-                                        scale: 2),
-                                    title: Text(
-                                      cat[i].name,
-                                    ),
-                                    tileColor: Color(cat[i].color),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8)),
-                                    textColor: Colors.white,
-                                  ),
+                  ),
+                ),
+                const SizedBox(height: 16,),
+                TextFormField(
+                    controller: categoryController,
+                    textAlignVertical: TextAlignVertical.center,
+                    readOnly: true,
+                    onTap: () {
+
+                    },
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
+                      hintText: 'Category',
+                      prefixIcon: const Icon(FontAwesomeIcons.list, size: 16, color: Colors.grey),
+                      suffixIcon:  IconButton(
+                        onPressed: () {
+                            showDialog(
+                              context: context, 
+                              builder: (ctx){
+                                bool isExpanded = false;
+                                return  StatefulBuilder(
+                                  builder: (context, setState) {
+                                  return AlertDialog(
+                                    title: const Text(
+                                      textAlign: TextAlign.center,
+                                      'Create a Category',
+                                      style: TextStyle(
+                                        color: Color.fromARGB(255, 65, 19, 73),
+                                        fontWeight: FontWeight.bold,
+                                       ),
+                                      ),
+                                      content: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const SizedBox(height: 16,),
+                                            SizedBox(
+                                              width:  MediaQuery.of(context).size.width,
+                                              child: TextFormField(
+                                                // controller: dateController,
+                                                textAlignVertical: TextAlignVertical.center,
+                                                // readOnly: true,
+                                                onTap: () {
+                                                  setState(() {
+                                                          isExpanded = false;
+                                                    });
+                                                  
+                                                },
+                                                
+                                                decoration: InputDecoration(
+                                                  isDense: true,
+                                                  filled: true,
+                                                  fillColor: Colors.white,
+                                                  hintText: 'Name',
+                                                  prefixIcon: const Icon(FontAwesomeIcons.listCheck, size: 16, color: Colors.grey),
+                                                  border: OutlineInputBorder
+                                                  (
+                                                    borderRadius: BorderRadius.circular(28),
+                                                    borderSide: const BorderSide(
+                                                      color: Color.fromARGB(255, 65, 19, 73),
+                                                      width: 2.0,
+                                                    ),
+                                                  ),
+                                                  focusedBorder: OutlineInputBorder(
+                                                    borderSide: const BorderSide(
+                                                      color: Color.fromARGB(255, 148, 2, 2), // Border color when focused
+                                                      width: 2.0,
+                                                    ),
+                                                    borderRadius: BorderRadius.circular(20),
+                                                  ),
+                                                  errorBorder: OutlineInputBorder(
+                                                    borderSide: const BorderSide(
+                                                      color: Colors.red, // Border color when there is an error
+                                                      width: 2.0,
+                                                    ),
+                                                    borderRadius: BorderRadius.circular(20),
+                                                  ),
+                                                ),
+                                                
+                                              ),
+                                            ),
+                                            const SizedBox(height: 16,),
+                                            TextFormField(
+                                              // controller: dateController,
+                                              onTap: () {
+                                                 setState(() {
+                                                        isExpanded = false;
+                                                      });
+                                              },
+                                              textAlignVertical: TextAlignVertical.center,
+                                              // ignore: dead_code
+                                              readOnly: isExpanded ?  true : false,
+                                              decoration: InputDecoration(
+                                                isDense: true,
+                                                filled: true,
+                                                fillColor: Colors.white,
+                                                hintText: 'Icon',
+                                                prefixIcon: const Icon(FontAwesomeIcons.icons, size: 16, color: Colors.grey),
+                                                suffixIcon:  IconButton(
+                                                  onPressed: () {
+                                                      setState(() {
+                                                        isExpanded = !isExpanded;
+                                                      });
+                                                    },
+                                                  icon: const Icon(FontAwesomeIcons.circleChevronDown, 
+                                                  size: 16, 
+                                                  color: Color.fromARGB(255, 53, 22, 58),
+                                                  
+                                                   ),
+                                                   
+                                                  ),
+                                                border: OutlineInputBorder
+                                                (
+                                                  borderRadius: BorderRadius.circular(28),
+                                                  borderSide: const BorderSide(
+                                                    color: Color.fromARGB(255, 65, 19, 73),
+                                                    width: 2.0,
+                                                  ),
+                                                ),
+                                                focusedBorder: OutlineInputBorder(
+                                                  borderSide: const BorderSide(
+                                                    color: Color.fromARGB(255, 148, 2, 2), // Border color when focused
+                                                    width: 2.0,
+                                                  ),
+                                                  borderRadius: BorderRadius.circular(20),
+                                                ),
+                                                errorBorder: OutlineInputBorder(
+                                                  borderSide: const BorderSide(
+                                                    color: Colors.red, // Border color when there is an error
+                                                    width: 2.0,
+                                                  ),
+                                                  borderRadius: BorderRadius.circular(20),
+                                                ),
+                                              ),
+                                              
+                                            ),
+                                            isExpanded ?
+                                            Container(
+                                              width: MediaQuery.of(context).size.width,
+                                              height: 200,
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius: BorderRadius.circular(28),  
+                                              ),
+                                              child:  Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: GridView.builder(
+                                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                                    crossAxisCount: 3,
+                                                    mainAxisSpacing: 5,
+                                                    crossAxisSpacing: 5
+                                                  ),
+                                                  itemCount: myCategoriesIcons.length,
+                                                  itemBuilder:(context, int i){
+                                                    return GestureDetector(
+                                                      onTap: () {
+                                                        setState(() {
+                                                            iconSelected = myCategoriesIcons[i];
+                                                        });
+                                                      },
+                                                      child: Container(
+                                                        width: 40,
+                                                        height: 40,
+                                                        decoration: BoxDecoration(
+                                                          border: Border.all(
+                                                            width:3,
+                                                            color: iconSelected == myCategoriesIcons[i]
+                                                            ? const Color.fromARGB(255, 58, 27, 63) : Colors.grey
+                                                          ),
+                                                          color:  iconSelected == myCategoriesIcons[i]
+                                                            ? Color.fromARGB(255, 206, 133, 219) : Colors.grey,
+                                                          borderRadius:  BorderRadius.circular(100),
+                                                          image: DecorationImage(
+                                                            image: AssetImage(
+                                                              'assets/${myCategoriesIcons[i]}.png',
+                                                              ),
+                                                              // fit: BoxFit.cover,
+                                                          ),
+                                                          
+                                                        )
+                                                      ),
+                                                    );
+                                                  } ,
+                                                ),
+                                              ),
+                                            )
+                                            : Container(),
+                                            const SizedBox(height: 16,),
+                                            TextFormField(
+                                              // controller: dateController,
+                                              textAlignVertical: TextAlignVertical.center,
+                                              // readOnly: true,
+                                              decoration: InputDecoration(
+                                                isDense: true,
+                                                filled: true,
+                                                fillColor: Colors.white,
+                                                hintText: 'Color',
+                                                prefixIcon: const Icon(FontAwesomeIcons.heartCircleCheck, size: 16, color: Colors.grey),
+                                                border: OutlineInputBorder
+                                                (
+                                                  borderRadius: BorderRadius.circular(28),
+                                                  borderSide: const BorderSide(
+                                                    color: Color.fromARGB(255, 65, 19, 73),
+                                                    width: 2.0,
+                                                  ),
+                                                ),
+                                                focusedBorder: OutlineInputBorder(
+                                                  borderSide: const BorderSide(
+                                                    color: Color.fromARGB(255, 148, 2, 2), // Border color when focused
+                                                    width: 2.0,
+                                                  ),
+                                                  borderRadius: BorderRadius.circular(20),
+                                                ),
+                                                errorBorder: OutlineInputBorder(
+                                                  borderSide: const BorderSide(
+                                                    color: Colors.red, // Border color when there is an error
+                                                    width: 2.0,
+                                                  ),
+                                                  borderRadius: BorderRadius.circular(20),
+                                                ),
+                                              ),
+                                              
+                                            ),
+                                            
+                                          ],
+                                        ),
+                                      );
+                                  }
                                 );
-                              }),
+                               }
+                              );
+                        },
+                        icon: const Icon(
+                          FontAwesomeIcons.circlePlus, 
+                          size: 16, 
+                          color: Colors.grey
+                         )
                         ),
-                      ) : Container(),
+                      border: OutlineInputBorder
+                      (
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: const BorderSide(
+                          color: Color.fromARGB(255, 65, 19, 73),
+                          width: 2.0,
+                        ),
+                      ),
+                       focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                          color: Color.fromARGB(255, 148, 2, 2), // Border color when focused
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                          color: Colors.red, // Border color when there is an error
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                     ),
+                    
+                  ),
+                 const SizedBox(height: 16,),
+                TextFormField(
+                  controller: dateController,
+                    textAlignVertical: TextAlignVertical.center,
+                    readOnly: true,
+                    onTap: () async {
+                      DateTime? newDate = await  showDatePicker(
+                        context: context,
+                        initialDate: selectDate,
+                        firstDate: DateTime.now(), 
+                        lastDate: DateTime.now().add(const Duration(days:365))
+                        );
 
-                    const SizedBox(
-                      height: 16,
-                    ),
-
-                    TextFormField(
-                      controller: dateController,
-                      textAlignVertical: TextAlignVertical.center,
-                      readOnly: true,
-                      onTap: () async {
-                        DateTime? newDate = await showDatePicker(
-                            context: context,
-                            initialDate: expense.date,
-                            firstDate: DateTime.now(),
-                            lastDate:
-                                DateTime.now().add(const Duration(days: 365)));
-
-                        if (newDate != null) {
+                        if(newDate != null){
                           setState(() {
-                            dateController.text =
-                                DateFormat('dd/MM/yyyy').format(newDate);
-                            selectDate = newDate;
-                            expense.date = newDate;
+                              dateController.text = DateFormat('dd/MM/yyyy').format(newDate);
+                              selectDate = newDate;
                           });
                         }
-                      },
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        hintText: 'Date',
-                        prefixIcon: const Icon(FontAwesomeIcons.clock,
-                            size: 16, color: Colors.grey),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: const BorderSide(
-                            color: Color.fromARGB(255, 65, 19, 73),
-                            width: 2.0,
+                    },
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
+                      hintText: 'Date',
+                      prefixIcon: const Icon(FontAwesomeIcons.clock, size: 16, color: Colors.grey),
+                      border: OutlineInputBorder
+                      (
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: const BorderSide(
+                          color: Color.fromARGB(255, 65, 19, 73),
+                          width: 2.0,
+                        ),
+                      ),
+                       focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                          color: Color.fromARGB(255, 148, 2, 2), // Border color when focused
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(
+                          color: Colors.red, // Border color when there is an error
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    
+                  ),
+                 const SizedBox(height: 16,),
+                  Center(
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: kToolbarHeight,
+                      child: TextButton(
+                        onPressed: () {},
+                        style: TextButton.styleFrom(
+                          backgroundColor: Color.fromARGB(255, 63, 0, 49),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
                           ),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                            color: Color.fromARGB(
-                                255, 148, 2, 2), // Border color when focused
-                            width: 2.0,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                            color: Colors
-                                .red, // Border color when there is an error
-                            width: 2.0,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.save,
+                              color: Colors.white,
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              'Save',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    //  
-                     SizedBox(
-                      child: isLoading == true
-                          ? const Center(child: CircularProgressIndicator(),)
-                          :  Button(
-                              text: 'Save Expenses',
-                              icon: Icons.save,
-                              onPressed: () {
-                                // Your save action here
-                                setState(() {
-                                  expense.expenseId = const Uuid().v1();
-                                  expense.amount = double.parse(expenseController.text);
-                                  expense.userId =  user.uid;
-                                });
-                              context.read<CreateExpenseBloc>().add(CreateExpense(expense));
-                            }
-                          // Navigator.pop(context);
-                          ),
-                      ),
-                      
-                    const SizedBox(height: 16),
-                    SizedBox(
-                      child: TimerWidget(
-                        initialMessage: message,
-                        duration: const Duration(seconds: 5),
-                        color_status: Color_Status,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            } else {
-              return const Center(child: CircularProgressIndicator());
-            }
-          }),
+                  )
+              ],
+            ),
         ),
-      ),
+        ),
     );
+    
+    
   }
 }
