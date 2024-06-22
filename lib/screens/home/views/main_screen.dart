@@ -1,12 +1,32 @@
 
 import 'dart:math';
 
+import 'package:expense_repository/expense_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:personal_budget_managemet/data/data.dart';
+import 'package:intl/intl.dart';
+import 'package:personal_budget_managemet/screens/add_expense/views/add_money.dart';
+import 'package:personal_budget_managemet/screens/home/views/all_expenses_dart.dart';
 
 class MainScreen extends StatelessWidget {
-  const MainScreen({super.key});
+  final List<Expense> expenses;
+  const MainScreen(this.expenses, {super.key});
+
+  // Function to calculate total expenses
+ // Function to calculate total expenses
+  double getTotalExpenses() {
+    double total = 0;
+    for (var expense in expenses) {
+      // Ensure the expense amount is valid
+      // ignore: unnecessary_null_comparison
+      if (expense.amount != null) {
+        total += expense.amount;
+      } else {
+        return 0;
+      }
+    }
+    return total;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +74,7 @@ class MainScreen extends StatelessWidget {
                         style: TextStyle(
                         fontSize:  18,
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onBackground
+                        color: Theme.of(context).colorScheme.onSurface
                       ),
                     )
                   ]
@@ -62,8 +82,14 @@ class MainScreen extends StatelessWidget {
               ],
               ),
               IconButton(
-              onPressed: () {}, 
-              icon: Icon(CupertinoIcons.settings))
+               onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) =>  const AddMoney()),
+                );
+               },
+               icon: const Icon(CupertinoIcons.settings)
+              ),
             ],
           ),
           const SizedBox(height:20,),
@@ -173,10 +199,10 @@ class MainScreen extends StatelessWidget {
                             )
                           ),
                           const SizedBox(width: 8),
-                          const Column(
+                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                               Text(
+                               const Text(
                                   "Expenses",
                                   style: TextStyle(
                                     fontSize: 14,
@@ -185,8 +211,8 @@ class MainScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  "N 18500.00",
-                                   style: TextStyle(
+                                   "N ${getTotalExpenses()}0",
+                                   style: const TextStyle(
                                     fontSize: 14,
                                     color: Colors.white,
                                     fontWeight: FontWeight.w600 
@@ -210,14 +236,17 @@ class MainScreen extends StatelessWidget {
                 "Transactions",
                 style: TextStyle(
                   fontSize: 16,
-                  color : Theme.of(context).colorScheme.onBackground,
+                  color : Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.bold
                 ),
               ),
                GestureDetector(
-                onTap: () {
-
-                },
+               onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) =>  AllExpense(expenses)),
+                );
+               },
                  child: const Text(
                   "View All",
                   style: TextStyle(
@@ -233,7 +262,7 @@ class MainScreen extends StatelessWidget {
            Expanded(
              child: ListView.builder(
                   // itemCount: expenses.length,
-                  itemCount: transactionsData.length,
+                  itemCount: expenses.length,
                   itemBuilder: (context, int i) {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
@@ -256,25 +285,25 @@ class MainScreen extends StatelessWidget {
                                         width: 50,
                                         height: 50,
                                         decoration:  BoxDecoration(
-                                          color: transactionsData[i]['color'],
+                                          color: Color(expenses[i].category.color),
                                           shape: BoxShape.circle
                                         ),
                                       ),
-                                      transactionsData[i]['icon']
-                                      // Image.asset(
-                                      //   'assets/${expenses[i].category.icon}.png',
-                                      //   scale: 2,
-                                      //   color: Colors.white,
-                                      // )
+                                      
+                                      Image.asset(
+                                        'assets/${expenses[i].category.icon}.png',
+                                        scale: 2,
+                                        color: Colors.white,
+                                      )
                                     ],
                                   ),
                                   const SizedBox(width: 12),
                                   Text(
                                     // expenses[i].category.name,
-                                    transactionsData[i]['name'],
+                                    expenses[i].category.name,
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: Theme.of(context).colorScheme.onBackground,
+                                      color: Theme.of(context).colorScheme.onSurface,
                                       fontWeight: FontWeight.w500
                                     ),
                                   ),
@@ -284,17 +313,15 @@ class MainScreen extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   Text(
-                                    // "N ${expenses[i].amount}.00",
-                                    transactionsData[i]['totalAmount'],
+                                    "N${expenses[i].amount}0",
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: Theme.of(context).colorScheme.onBackground,
+                                      color: Theme.of(context).colorScheme.onSurface,
                                       fontWeight: FontWeight.w400
                                     ),
                                   ),
                                   Text(
-                                    // DateFormat('dd/MM/yyyy').format(expenses[i].date),
-                                    transactionsData[i]['date'],
+                                    DateFormat('dd/MM/yyyy').format(expenses[i].date),
                                     style: TextStyle(
                                       fontSize: 14,
                                       color: Theme.of(context).colorScheme.outline,
@@ -310,11 +337,11 @@ class MainScreen extends StatelessWidget {
                     );
                   }
                 ),
-           ),
+             ),
             
         ],
       ),
-     )
+     ),
     );
   }
 }
